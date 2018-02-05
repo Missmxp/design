@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.design.dao.ShopCarDao">
+    <resultMap id="BaseResultMap" type="com.design.entity.ShopCar">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_uid" property="userUid" jdbcType="VARCHAR"/>
+        <result column="book_uid" property="bookUid" jdbcType="VARCHAR"/>
+        <result column="nums" property="nums" jdbcType="INTEGER"/>
+        <result column="deleted" property="deleted" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, user_uid, book_uid, nums, deleted, create_time, update_time
+  </sql>
+
+    <select id="selectByUseUid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_car
+        where user_uid = #{userUid} and deleted = #{deleted}
+    </select>
+
+    <select id="selectByUuidAndBuid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_car
+        where user_uid = #{userUid} and book_uid = #{bookUid} and deleted = #{deleted}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from shop_car
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insert" parameterType="com.design.entity.ShopCar">
+    insert into shop_car (id, user_uid, book_uid, 
+      nums, deleted, create_time, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{userUid,jdbcType=VARCHAR}, #{bookUid,jdbcType=VARCHAR}, 
+      #{nums,jdbcType=INTEGER}, #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.design.entity.ShopCar">
+    update shop_car
+    set user_uid = #{userUid,jdbcType=VARCHAR},
+      book_uid = #{bookUid,jdbcType=VARCHAR},
+      nums = #{nums,jdbcType=INTEGER},
+      deleted = #{deleted,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

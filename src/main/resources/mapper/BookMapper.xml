@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.design.dao.BookDao">
+    <resultMap id="BaseResultMap" type="com.design.entity.Book">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="uid" property="uid" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="author" property="author" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="INTEGER"/>
+        <result column="stock" property="stock" jdbcType="INTEGER"/>
+        <result column="deleted" property="deleted" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.design.entity.Book" extends="BaseResultMap">
+        <result column="description" property="description" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, uid, name, author, price, stock, deleted, create_time, update_time
+  </sql>
+    <sql id="Blob_Column_List">
+    description
+  </sql>
+    <select id="selectByBookUid" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from book_info
+        where uid = #{uid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByPaginate" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+    select
+    *
+    from book_info
+    limit #{m},#{n}
+  </select>
+
+    <select id="selectAll" resultMap="ResultMapWithBLOBs">
+  select
+  *
+  from book_info
+</select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from book_info
+    where uid = #{uid,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insert" parameterType="com.design.entity.Book">
+    insert into book_info (uid, name,
+      author, price, stock, 
+      create_time, update_time,
+      description)
+    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+      #{author,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+      #{description,jdbcType=LONGVARCHAR})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.design.entity.Book">
+    update book_info
+    set uid = #{uid,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      price = #{price,jdbcType=INTEGER},
+      stock = #{stock,jdbcType=INTEGER},
+      deleted = #{deleted,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

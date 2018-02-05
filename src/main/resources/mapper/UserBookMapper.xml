@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.design.dao.UserBookDao">
+    <resultMap id="BaseResultMap" type="com.design.entity.UserBook">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_uid" property="userUid" jdbcType="VARCHAR"/>
+        <result column="book_uid" property="bookUid" jdbcType="VARCHAR"/>
+        <result column="buy_price" property="buyPrice" jdbcType="INTEGER"/>
+        <result column="buy_nums" property="buyNums" jdbcType="INTEGER"/>
+        <result column="buy_way" property="buyWay" jdbcType="BIT"/>
+        <result column="deleted" property="deleted" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, user_uid, book_uid, buy_price, buy_nums, buy_way, deleted, create_time, update_time
+  </sql>
+  <select id="selectByUserUid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_book
+    where user_uid = #{userUid}
+  </select>
+  <select id="saleSum" resultType="com.design.entity.SaleSum">
+    select
+    book_uid,sum(buy_price) as total_price,sum(buy_nums) as nums,create_time as updateTime
+    from user_book
+    <if test="today != null" >
+      where create_time>#{today,jdbcType=TIMESTAMP}
+    </if>
+    group by book_uid
+  </select>
+  <select id="selectByUuidAndBuid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_book
+    where user_uid = #{userUid} and book_uid = #{bookUid} and buy_way = #{buyWay}
+  </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from user_book
+        where user_uid = #{userUid,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user_book
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insert" parameterType="com.design.entity.UserBook">
+    insert into user_book (id, user_uid, book_uid, 
+      buy_price, buy_nums, buy_way, 
+      deleted, create_time, update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{userUid,jdbcType=VARCHAR}, #{bookUid,jdbcType=VARCHAR}, 
+      #{buyPrice,jdbcType=INTEGER}, #{buyNums,jdbcType=INTEGER}, #{buyWay,jdbcType=BIT}, 
+      #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.design.entity.UserBook">
+    update user_book
+    set user_uid = #{userUid,jdbcType=VARCHAR},
+      book_uid = #{bookUid,jdbcType=VARCHAR},
+      buy_price = #{buyPrice,jdbcType=INTEGER},
+      buy_nums = #{buyNums,jdbcType=INTEGER},
+      buy_way = #{buyWay,jdbcType=BIT},
+      deleted = #{deleted,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+  </update>
+</mapper>
